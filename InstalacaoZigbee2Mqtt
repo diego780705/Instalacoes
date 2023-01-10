@@ -1,0 +1,74 @@
+1 - ls -l /dev/serial/by-id
+
+  * Se já estiver instalado o node-red, não execute o passo 2 e 3
+
+  2 - curl -fsSL https://deb.nodesource.com/setup_19.x | bash - 
+
+  3 - apt-get install -y nodejs	
+
+4 - mkdir /opt/zigbee2mqtt
+
+5 - chown -R ${USER}: /opt/zigbee2mqtt
+
+6 - git clone --depth 1 https://github.com/Koenkk/zigbee2mqtt.git /opt/zigbee2mqtt
+
+7 - cd /opt/zigbee2mqtt
+
+8 - npm ci
+
+9 - nano /opt/zigbee2mqtt/data/configuration.yaml 
+
+- 01
+
+frontend:
+  port: 80
+mqtt:
+  base_topic: zigbee2mqtt
+  server: mqtt://localhost:1883 
+serial:
+  port: /dev/ttyACM0
+
+ - 02
+
+frontend:
+  port: 80
+mqtt:
+  base_topic: zigbee2mqtt
+  server: mqtt://localhost:1883
+serial:  
+  port: /dev/ttyUSB0 	
+
+- 03
+
+frontend:
+  port: 80
+mqtt:
+  base_topic: zigbee2mqtt
+  server: mqtt://localhost:1883  
+advanced:
+  transmit_power: 20
+serial:  
+  port: /dev/ttyUSB0
+  adapter: ezsp 
+
+10 - cd /opt/zigbee2mqtt
+
+11 - npm start
+
+12 - nano /lib/systemd/system/zigbee2mqtt.service
+
+[Unit]
+Description=zigbee2mqtt
+After=network.target
+[Service]
+ExecStart=/usr/bin/npm start
+WorkingDirectory=/opt/zigbee2mqtt
+StandardOutput=inherit
+StandardError=inherit
+Restart=always
+RestartSec=10s
+User=root
+[Install]
+WantedBy=multi-user.target
+
+13 - systemctl enable zigbee2mqtt.service
