@@ -1,0 +1,41 @@
+1 - sudo apt update -y && apt upgrade -y && apt autoremove -y
+
+2 - sudo apt-get install samba
+
+3 - cd /etc/samba
+
+4 - sudo nano smb.conf
+
+	* Subistitua todo o conteudo do arquivo por este a baixo.
+
+[global]
+        workgroup = WORKGROUP
+        server string = HUB
+        server role = standalone server
+        passdb backend = smbpasswd
+        map to guest = bad user
+[Zigbee2mqtt]
+        path = /opt/zigbee2mqtt
+        guest ok = yes
+        read only = no
+        browseable = yes
+        create mode = 0777
+        directory mode = 0777
+[Node-RED]
+        path = /usr/lib/node_modules/node-red
+        guest ok = yes
+        read only = no
+        browseable = yes
+        create mode = 0777
+        directory mode = 0777
+
+5 - sudo chmod -R 777 /opt/zigbee2mqtt
+
+6 - sudo chmod -R 777 /usr/lib/node_modules/node-red
+
+7 - sudo systemctl enable --now smbd nmbd 
+
+	* Para modificações, use o seguinte comando - service smbd restart
+
+
+
